@@ -25,6 +25,12 @@ struct MenuBarView: View {
                             .font(.title2.bold())
                     }
                 }
+                Text(latest.timestamp, style: .relative)
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+                + Text(" ago")
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
             }
 
             // Chart
@@ -87,12 +93,11 @@ struct MenuBarView: View {
 struct SpeedChart: View {
     let results: [SpeedResult]
 
-    private var chartStride: (component: Calendar.Component, count: Int) {
+    private var axisDates: [Date] {
         guard let first = results.first, let last = results.last else {
-            return (.minute, 15)
+            return []
         }
-        let duration = last.timestamp.timeIntervalSince(first.timestamp)
-        return ChartAxisCalculator.calculateStride(duration: duration)
+        return ChartAxisCalculator.roundedAxisDates(from: first.timestamp, to: last.timestamp)
     }
 
     var body: some View {
@@ -116,8 +121,7 @@ struct SpeedChart: View {
             "Upload": .green,
         ])
         .chartXAxis {
-            AxisMarks(values: .stride(by: chartStride.component, count: chartStride.count)) { value in
-                // Use a smaller font to help prevent overlapping
+            AxisMarks(values: axisDates) { value in
                 AxisValueLabel(format: .dateTime.hour().minute())
                     .font(.caption2)
                 AxisGridLine()
@@ -126,6 +130,6 @@ struct SpeedChart: View {
         .chartYAxis {
             AxisMarks(position: .leading)
         }
-        .chartLegend(position: .top)
+        .chartLegend(position: .top, spacing: 8)
     }
 }
