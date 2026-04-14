@@ -10,5 +10,10 @@ let package = Package(
             path: "Sources/InternetSpeed",
             exclude: ["Info.plist", "AppIcon.icns", "Assets.xcassets"]
         ),
+        .testTarget(
+            name: "InternetSpeedTests",
+            dependencies: ["InternetSpeed"],
+            path: "Tests/InternetSpeedTests"
+        ),
     ]
 )

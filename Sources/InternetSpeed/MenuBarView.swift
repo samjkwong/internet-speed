@@ -87,6 +87,14 @@ struct MenuBarView: View {
 struct SpeedChart: View {
     let results: [SpeedResult]
 
+    private var chartStride: (component: Calendar.Component, count: Int) {
+        guard let first = results.first, let last = results.last else {
+            return (.minute, 15)
+        }
+        let duration = last.timestamp.timeIntervalSince(first.timestamp)
+        return ChartAxisCalculator.calculateStride(duration: duration)
+    }
+
     var body: some View {
         Chart {
             ForEach(results) { result in
@@ -108,8 +116,10 @@ struct SpeedChart: View {
             "Upload": .green,
         ])
         .chartXAxis {
-            AxisMarks(values: .automatic(desiredCount: 4)) { value in
+            AxisMarks(values: .stride(by: chartStride.component, count: chartStride.count)) { value in
+                // Use a smaller font to help prevent overlapping
                 AxisValueLabel(format: .dateTime.hour().minute())
+                    .font(.caption2)
                 AxisGridLine()
             }
         }
