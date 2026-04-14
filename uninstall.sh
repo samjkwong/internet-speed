@@ -1,8 +1,9 @@
 #!/bin/bash
-# Uninstall the internet speed menu bar app.
+# Uninstall the Internet Speed menu bar app.
 set -e
 
-PLIST="$HOME/Library/LaunchAgents/com.speedtest.menubar.plist"
+BINARY="$HOME/.local/bin/InternetSpeed"
+PLIST="$HOME/Library/LaunchAgents/com.internetspeed.menubar.plist"
 
 echo "==> Stopping the app..."
 launchctl unload "$PLIST" 2>/dev/null || true
@@ -10,6 +11,9 @@ launchctl unload "$PLIST" 2>/dev/null || true
 echo "==> Removing LaunchAgent..."
 rm -f "$PLIST"
 
+echo "==> Removing binary..."
+rm -f "$BINARY"
+
 echo ""
-echo "Done! The app has been stopped and removed from login items."
-echo "You can delete this directory to fully remove it."
+echo "Done! The app has been stopped and removed."
+echo "To also remove speed test history: rm -rf ~/Library/Application\\ Support/InternetSpeed"
