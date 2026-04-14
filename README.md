@@ -21,10 +21,28 @@ A native macOS menu bar app that periodically runs internet speed tests and disp
 ## Requirements
 
 - macOS 14+
-- Xcode (for building from source)
-- [Homebrew](https://brew.sh) (used to install the Speedtest CLI)
+- [Ookla Speedtest CLI](https://www.speedtest.net/apps/cli) (see install steps below)
 
 ## Install
+
+### Quick install (recommended)
+
+Download the latest `.app` from the [Releases page](https://github.com/samjkwong/internet-speed/releases) — no Xcode or build tools needed.
+
+1. Download `Internet.Speed.app.zip` from [the latest release](https://github.com/samjkwong/internet-speed/releases/latest)
+2. Unzip and drag **Internet Speed.app** to `/Applications`
+3. Install the Ookla Speedtest CLI (if you don't have it):
+   ```bash
+   brew tap teamookla/speedtest
+   brew install teamookla/speedtest/speedtest
+   ```
+4. Open the app — it will appear in your menu bar
+
+To start on login, go to **System Settings > General > Login Items** and add "Internet Speed".
+
+### Build from source
+
+Requires Xcode and [Homebrew](https://brew.sh).
 
 ```bash
 git clone https://github.com/samjkwong/internet-speed.git
@@ -32,13 +50,7 @@ cd internet-speed
 ./install.sh
 ```
 
-This will:
-1. Install the [Ookla Speedtest CLI](https://www.speedtest.net/apps/cli) via Homebrew (if not already installed)
-2. Build the `.app` bundle from source
-3. Copy it to `/Applications`
-4. Launch the app
-
-To start on login, go to **System Settings > General > Login Items** and add "Internet Speed".
+This will install the Speedtest CLI (if needed), build the `.app` from source, copy it to `/Applications`, and launch it.
 
 ## Uninstall
 
