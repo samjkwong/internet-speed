@@ -15,13 +15,13 @@ A native macOS menu bar app that periodically runs internet speed tests and disp
 - Configurable test interval (5, 15, 30, or 60 minutes)
 - Run a speed test manually at any time
 - Persists speed history across restarts
-- Starts automatically on login via LaunchAgent
+- Installs as a proper `.app` in /Applications
 - Uses [Ookla's official Speedtest CLI](https://www.speedtest.net/apps/cli) for accurate results
 
 ## Requirements
 
 - macOS 14+
-- Swift 5.9+ (included with Xcode Command Line Tools)
+- Xcode (for building from source)
 - [Homebrew](https://brew.sh) (used to install the Speedtest CLI)
 
 ## Install
@@ -34,10 +34,11 @@ cd internet-speed
 
 This will:
 1. Install the [Ookla Speedtest CLI](https://www.speedtest.net/apps/cli) via Homebrew (if not already installed)
-2. Build the app from source
-3. Install the binary to `~/.local/bin`
-4. Register a LaunchAgent so the app starts on login
-5. Start the app immediately
+2. Build the `.app` bundle from source
+3. Copy it to `/Applications`
+4. Launch the app
+
+To start on login, go to **System Settings > General > Login Items** and add "Internet Speed".
 
 ## Uninstall
 
@@ -56,13 +57,13 @@ Click the speed indicator in your menu bar to open the dashboard:
 
 ## Development
 
-Build and run locally:
+Build the `.app` bundle:
 
 ```bash
-swift build
-.build/debug/InternetSpeed
+./build.sh
+open "Internet Speed.app"
 ```
 
 ## How It Works
 
-The app uses SwiftUI's `MenuBarExtra` with a `.window` style for the popover UI, Swift Charts for the speed history graph, and Ookla's official Speedtest CLI to measure internet speed. Speed tests run on a background thread so the UI stays responsive. Results are persisted to `~/Library/Application Support/InternetSpeed/history.json`. A macOS LaunchAgent keeps the app running across logins.
+The app uses SwiftUI's `MenuBarExtra` with a `.window` style for the popover UI, Swift Charts for the speed history graph, and Ookla's official Speedtest CLI to measure internet speed. Speed tests run on a background thread so the UI stays responsive. Results are persisted to `~/Library/Application Support/InternetSpeed/history.json`.

@@ -1,17 +1,14 @@
 #!/bin/bash
 # Install the Internet Speed menu bar app.
-# Builds from source, installs the binary, and registers a LaunchAgent.
+# Builds the .app bundle and copies it to /Applications.
 set -e
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
-INSTALL_DIR="$HOME/.local/bin"
-BINARY="$INSTALL_DIR/InternetSpeed"
-PLIST_NAME="com.internetspeed.menubar"
-PLIST="$HOME/Library/LaunchAgents/$PLIST_NAME.plist"
+APP_NAME="Internet Speed"
 
 echo "==> Checking for Swift..."
 if ! command -v swift &>/dev/null; then
-    echo "Error: Swift not found. Install Xcode Command Line Tools with: xcode-select --install"
+    echo "Error: Swift not found. Install Xcode or Xcode Command Line Tools."
     exit 1
 fi
 
@@ -26,43 +23,22 @@ if ! command -v speedtest &>/dev/null; then
     brew install teamookla/speedtest/speedtest
 fi
 
-echo "==> Building InternetSpeed..."
-cd "$DIR"
-swift build -c release --quiet
+echo "==> Building $APP_NAME..."
+"$DIR/build.sh"
 
-echo "==> Installing binary..."
-mkdir -p "$INSTALL_DIR"
-cp "$DIR/.build/release/InternetSpeed" "$BINARY"
+echo "==> Quitting existing instance (if any)..."
+osascript -e "quit app \"$APP_NAME\"" 2>/dev/null || true
+sleep 1
 
-echo "==> Unloading existing LaunchAgent (if any)..."
-launchctl unload "$PLIST" 2>/dev/null || true
+echo "==> Installing to /Applications..."
+rm -rf "/Applications/$APP_NAME.app"
+cp -R "$DIR/$APP_NAME.app" "/Applications/$APP_NAME.app"
 
-echo "==> Installing LaunchAgent..."
-cat > "$PLIST" <<EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
-  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>Label</key>
-    <string>$PLIST_NAME</string>
-    <key>ProgramArguments</key>
-    <array>
-        <string>$BINARY</string>
-    </array>
-    <key>RunAtLoad</key>
-    <true/>
-    <key>KeepAlive</key>
-    <false/>
-</dict>
-</plist>
-EOF
-
-echo "==> Starting the app..."
-launchctl load "$PLIST"
+echo "==> Launching $APP_NAME..."
+open "/Applications/$APP_NAME.app"
 
 echo ""
-echo "Done! Internet Speed is now running in your menu bar."
-echo "It will start automatically on login."
+echo "Done! $APP_NAME is now running in your menu bar."
 echo ""
+echo "To start on login: System Settings > General > Login Items > add '$APP_NAME'"
 echo "To uninstall, run: ./uninstall.sh"

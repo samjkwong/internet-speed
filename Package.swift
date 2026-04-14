@@ -7,7 +7,8 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "InternetSpeed",
-            path: "Sources/InternetSpeed"
+            path: "Sources/InternetSpeed",
+            exclude: ["Info.plist", "AppIcon.icns", "Assets.xcassets"]
         ),
     ]
 )
