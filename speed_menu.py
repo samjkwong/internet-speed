@@ -2,10 +2,21 @@
 """macOS menu bar app that periodically runs internet speed tests."""
 
 from dataclasses import dataclass
+import json
+import os
+import subprocess
 import threading
 import time
 import rumps
-import speedtest
+
+# LaunchAgents have a minimal PATH that may not include Homebrew.
+HOMEBREW_PATHS = ("/opt/homebrew/bin", "/usr/local/bin")
+SPEEDTEST_BIN = None
+for _dir in (*HOMEBREW_PATHS, *os.environ.get("PATH", "").split(":")):
+    _candidate = os.path.join(_dir, "speedtest")
+    if os.path.isfile(_candidate) and os.access(_candidate, os.X_OK):
+        SPEEDTEST_BIN = _candidate
+        break
 
 
 @dataclass(frozen=True)
@@ -74,14 +85,24 @@ class SpeedTestApp(rumps.App):
 
     def _run_test(self):
         try:
-            st = speedtest.Speedtest()
-            st.get_best_server()
-            st.download()
-            st.upload()
-            results = st.results.dict()
+            if not SPEEDTEST_BIN:
+                raise FileNotFoundError(
+                    "Ookla Speedtest CLI not found. "
+                    "Install with: brew install teamookla/speedtest/speedtest"
+                )
 
-            dl = results["download"] / 1_000_000
-            ul = results["upload"] / 1_000_000
+            result = subprocess.run(
+                [SPEEDTEST_BIN, "--format=json", "--accept-license"],
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )
+            result.check_returncode()
+            data = json.loads(result.stdout)
+
+            # Ookla reports bandwidth in bytes/sec, convert to Mbps
+            dl = data["download"]["bandwidth"] * 8 / 1_000_000
+            ul = data["upload"]["bandwidth"] * 8 / 1_000_000
 
             self.title = f"↓{dl:.0f} ↑{ul:.0f} Mbps"
             self.dl_item.title = f"Download: {dl:.1f} Mbps"

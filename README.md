@@ -15,6 +15,7 @@ A macOS menu bar app that periodically runs internet speed tests and displays yo
 
 - macOS
 - Python 3.9+
+- [Homebrew](https://brew.sh) (the install script uses it to install the Speedtest CLI)
 
 ## Install
 
@@ -25,10 +26,11 @@ cd internet-speed
 ```
 
 This will:
-1. Create a Python virtual environment
-2. Install dependencies
-3. Register a LaunchAgent so the app starts on login
-4. Start the app immediately
+1. Install the [Ookla Speedtest CLI](https://www.speedtest.net/apps/cli) via Homebrew (if not already installed)
+2. Create a Python virtual environment
+3. Install dependencies
+4. Register a LaunchAgent so the app starts on login
+5. Start the app immediately
 
 The speed test icon will appear in your menu bar.
 
@@ -67,4 +69,4 @@ Run the app directly (foreground, for testing):
 
 ## How It Works
 
-The app uses [rumps](https://github.com/jaredks/rumps) for the macOS menu bar UI and [speedtest-cli](https://github.com/sivel/speedtest-cli) to measure internet speed. Speed tests run in a background thread so the UI stays responsive. A macOS LaunchAgent keeps the app running across logins.
+The app uses [rumps](https://github.com/jaredks/rumps) for the macOS menu bar UI and [Ookla's official Speedtest CLI](https://www.speedtest.net/apps/cli) to measure internet speed. Speed tests run in a background thread so the UI stays responsive. A macOS LaunchAgent keeps the app running across logins.

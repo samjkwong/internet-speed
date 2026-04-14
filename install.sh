@@ -11,8 +11,15 @@ echo "==> Checking for Python 3..."
 if command -v python3 &>/dev/null; then
     PYTHON=python3
 else
-    echo "Error: python3 not found. Install Python 3 with: brew install python@3.12"
+    echo "Error: python3 not found. Install with: brew install python@3.12"
     exit 1
+fi
+
+echo "==> Checking for Ookla Speedtest CLI..."
+if ! command -v speedtest &>/dev/null; then
+    echo "Installing Ookla Speedtest CLI..."
+    brew tap teamookla/speedtest
+    brew install teamookla/speedtest/speedtest
 fi
 
 echo "==> Creating virtual environment..."

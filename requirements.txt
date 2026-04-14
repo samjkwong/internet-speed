@@ -1,2 +1,1 @@
 rumps>=0.4.0
-speedtest-cli>=2.1.3
