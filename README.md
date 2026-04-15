@@ -31,12 +31,16 @@ Download the latest `.app` from the [Releases page](https://github.com/samjkwong
 
 1. Download `Internet.Speed.app.zip` from [the latest release](https://github.com/samjkwong/internet-speed/releases/latest)
 2. Unzip and drag **Internet Speed.app** to `/Applications`
-3. Install the Ookla Speedtest CLI (if you don't have it):
+3. Remove the macOS quarantine flag (required for unsigned apps):
+   ```bash
+   xattr -cr "/Applications/Internet Speed.app"
+   ```
+4. Install the Ookla Speedtest CLI (if you don't have it):
    ```bash
    brew tap teamookla/speedtest
    brew install teamookla/speedtest/speedtest
    ```
-4. Open the app — it will appear in your menu bar
+5. Open the app — it will appear in your menu bar
 
 To start on login, go to **System Settings > General > Login Items** and add "Internet Speed".
 
