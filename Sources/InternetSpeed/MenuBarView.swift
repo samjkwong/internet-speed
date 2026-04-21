@@ -100,6 +100,11 @@ struct SpeedChart: View {
         return ChartAxisCalculator.roundedAxisDates(from: first.timestamp, to: last.timestamp)
     }
 
+    private var chartDurationDays: Double {
+        guard let first = results.first, let last = results.last else { return 0 }
+        return last.timestamp.timeIntervalSince(first.timestamp) / 86400
+    }
+
     var body: some View {
         Chart {
             ForEach(results) { result in
@@ -122,8 +127,13 @@ struct SpeedChart: View {
         ])
         .chartXAxis {
             AxisMarks(values: axisDates) { value in
-                AxisValueLabel(format: .dateTime.hour().minute())
-                    .font(.caption2)
+                if chartDurationDays >= 1 {
+                    AxisValueLabel(format: .dateTime.month(.abbreviated).day())
+                        .font(.caption2)
+                } else {
+                    AxisValueLabel(format: .dateTime.hour().minute())
+                        .font(.caption2)
+                }
                 AxisGridLine()
             }
         }

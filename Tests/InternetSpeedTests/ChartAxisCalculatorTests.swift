@@ -42,9 +42,9 @@ final class ChartAxisCalculatorTests: XCTestCase {
     }
 
     func testCalculateStride24Hours() {
-        let result = ChartAxisCalculator.calculateStride(duration: 24 * 3600)
+        let result = ChartAxisCalculator.calculateStride(duration: 25 * 3600)
         XCTAssertEqual(result.component, .hour)
-        XCTAssertEqual(result.count, 4)
+        XCTAssertEqual(result.count, 12, "25 hours should stride by 12 hours based on new logic")
     }
 
     // MARK: - roundedAxisDates

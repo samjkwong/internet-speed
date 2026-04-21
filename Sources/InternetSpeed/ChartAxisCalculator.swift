@@ -1,12 +1,20 @@
 import Foundation
 
 struct ChartAxisCalculator {
-    /// Returns the ideal calendar component and interval count based on duration
     static func calculateStride(duration: TimeInterval) -> (component: Calendar.Component, count: Int) {
         let minutes = duration / 60
+        let days = minutes / 1440
         
-        if minutes > 12 * 60 {
-            return (.hour, 4)
+        if days > 14 {
+            return (.day, 7)
+        } else if days > 7 {
+            return (.day, 2)
+        } else if days > 2 {
+            return (.day, 1)
+        } else if minutes > 24 * 60 {
+            return (.hour, 12)
+        } else if minutes > 12 * 60 {
+            return (.hour, 6)
         } else if minutes > 4 * 60 {
             return (.hour, 2)
         } else if minutes > 2 * 60 {
@@ -35,7 +43,10 @@ struct ChartAxisCalculator {
         var startComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: startDate)
         startComponents.second = 0
         
-        if stride.component == .hour {
+        if stride.component == .day {
+            let startOfDay = calendar.startOfDay(for: startDate)
+            startComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: startOfDay)
+        } else if stride.component == .hour {
             startComponents.minute = 0
             if let hour = startComponents.hour {
                 startComponents.hour = (hour / stride.count) * stride.count
